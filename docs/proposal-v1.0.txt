@@ -1,0 +1,17 @@
+PLACEHOLDER — Embroidery Thread Inventory & Business Management System
+Client Proposal v1.0
+
+This file is a placeholder. The actual client proposal content was not
+provided when this project was scaffolded. Replace this file with the
+real proposal text before building any business features.
+
+Known scope (from project name and setup request):
+- Multi-warehouse thread/product inventory tracking
+- Transfers between warehouses
+- Sales (including salesperson-facing mobile-friendly UI)
+- Customers, suppliers, purchases, returns, expenses
+- Reporting and audit logging
+- Role-based access: admin vs salesperson
+
+TODO: paste/replace with the real client proposal before starting
+feature work (entities, business rules, user roles, reports required, etc).

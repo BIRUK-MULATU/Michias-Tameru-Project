@@ -1,0 +1,2 @@
+-- Initial baseline migration. Intentionally empty.
+-- Flyway needs at least one migration to initialize its schema history table.
