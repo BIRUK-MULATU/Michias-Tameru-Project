@@ -1,4 +1,5 @@
 /**
- * Payments recorded against sales. Implemented in Phase 5.
+ * Payments recorded against sales. A sale may have more than one payment
+ * row (split payment); their amounts must sum to the sale's total.
  */
 package com.michias.threadims.payment;

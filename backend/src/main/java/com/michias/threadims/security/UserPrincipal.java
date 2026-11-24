@@ -15,18 +15,21 @@ public class UserPrincipal implements UserDetails {
     private final String passwordHash;
     private final Role role;
     private final boolean active;
+    private final UUID locationId;
 
-    public UserPrincipal(UUID id, String username, String passwordHash, Role role, boolean active) {
+    public UserPrincipal(
+            UUID id, String username, String passwordHash, Role role, boolean active, UUID locationId) {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;
         this.role = role;
         this.active = active;
+        this.locationId = locationId;
     }
 
-    public static UserPrincipal from(User user) {
+    public static UserPrincipal from(User user, UUID locationId) {
         return new UserPrincipal(
-                user.getId(), user.getUsername(), user.getPasswordHash(), user.getRole(), user.isActive());
+                user.getId(), user.getUsername(), user.getPasswordHash(), user.getRole(), user.isActive(), locationId);
     }
 
     public UUID getId() {
@@ -35,6 +38,11 @@ public class UserPrincipal implements UserDetails {
 
     public Role getRole() {
         return role;
+    }
+
+    /** The salesperson's currently assigned location, or {@code null} for an admin. */
+    public UUID getLocationId() {
+        return locationId;
     }
 
     @Override

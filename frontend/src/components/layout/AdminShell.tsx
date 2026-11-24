@@ -1,15 +1,19 @@
 import {
   LayoutDashboard,
   Package,
+  Boxes,
   Warehouse,
   ArrowLeftRight,
   ShoppingCart,
+  Undo2,
+  ClipboardCheck,
   Users,
   Truck,
   Receipt,
   BarChart3,
   ShieldCheck,
   Bell,
+  LineChart,
   LogOut,
 } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
@@ -17,6 +21,7 @@ import {
   Avatar,
   AvatarFallback,
 } from "@/components/ui/avatar";
+import { NotificationBell } from "@/components/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,13 +48,17 @@ import { useAuthStore } from "@/stores/auth-store";
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/inventory", label: "Inventory", icon: Boxes },
   { to: "/admin/locations", label: "Locations", icon: Warehouse },
   { to: "/admin/transfers", label: "Transfers", icon: ArrowLeftRight },
   { to: "/admin/sales", label: "Sales", icon: ShoppingCart },
+  { to: "/admin/returns", label: "Returns", icon: Undo2 },
   { to: "/admin/purchases", label: "Purchases", icon: Truck },
   { to: "/admin/expenses", label: "Expenses", icon: Receipt },
+  { to: "/admin/closings", label: "Daily Closings", icon: ClipboardCheck },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
   { to: "/admin/users", label: "Employees", icon: Users },
+  { to: "/admin/monitoring", label: "Monitoring", icon: LineChart },
   { to: "/admin/audit-logs", label: "Activity Logs", icon: ShieldCheck },
   { to: "/admin/notifications", label: "Notifications", icon: Bell },
 ];
@@ -114,6 +123,7 @@ export function AdminShell() {
         <header className="flex h-14 items-center gap-2 border-b px-4">
           <SidebarTrigger />
           <div className="flex-1" />
+          <NotificationBell />
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

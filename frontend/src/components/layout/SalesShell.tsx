@@ -1,5 +1,6 @@
 import { Home, ShoppingCart, PackagePlus, Undo2, ClipboardCheck, LogOut } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NotificationBell } from "@/components/NotificationBell";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -30,14 +31,17 @@ export function SalesShell() {
           </p>
           <p className="text-xs leading-tight text-muted-foreground">{user?.fullName}</p>
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
-          aria-label="Log out"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <NotificationBell />
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
+            aria-label="Log out"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
       <main className="flex-1 overflow-auto p-4 pb-20">

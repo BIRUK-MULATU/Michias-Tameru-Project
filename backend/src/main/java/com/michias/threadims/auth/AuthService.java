@@ -4,6 +4,7 @@ import com.michias.threadims.audit.AuditActions;
 import com.michias.threadims.audit.AuditService;
 import com.michias.threadims.auth.dto.AuthResponse;
 import com.michias.threadims.common.exception.ApiException;
+import com.michias.threadims.location.Location;
 import com.michias.threadims.security.JwtService;
 import com.michias.threadims.security.UserPrincipal;
 import com.michias.threadims.user.User;
@@ -72,7 +73,8 @@ public class AuthService {
                 .findByUsername(username)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
 
-        UserPrincipal principal = UserPrincipal.from(user);
+        UserPrincipal principal = UserPrincipal.from(
+                user, userService.findActiveLocation(user.getId()).map(Location::getId).orElse(null));
         String accessToken = jwtService.generateAccessToken(principal);
         String refreshToken = issueRefreshToken(user);
         userService.recordLogin(user);
@@ -106,7 +108,8 @@ public class AuthService {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Account is deactivated");
         }
 
-        String accessToken = jwtService.generateAccessToken(UserPrincipal.from(user));
+        String accessToken = jwtService.generateAccessToken(UserPrincipal.from(
+                user, userService.findActiveLocation(user.getId()).map(Location::getId).orElse(null)));
         String newRefreshToken = issueRefreshToken(user);
 
         UserResponse userResponse = userService.getResponseById(user.getId());
