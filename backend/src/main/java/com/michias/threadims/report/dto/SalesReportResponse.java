@@ -8,6 +8,9 @@ public record SalesReportResponse(
         BigDecimal totalRevenue,
         long totalTransactions,
         BigDecimal averageTransactionValue,
+        BigDecimal totalItemsSold,
+        BigDecimal grossProfit,
         Map<String, BigDecimal> revenueByPaymentMethod,
-        List<ProductSalesRow> bestSellingProducts) {
+        List<ProductSalesRow> bestSellingProducts,
+        List<DailyRevenueRow> dailyRevenue) {
 }

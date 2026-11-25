@@ -3,13 +3,21 @@ import { apiClient } from "@/lib/api-client";
 import type { ApiResponse } from "@/types/api";
 import type { SalesReportResponse } from "@/types/report";
 
-export function useSalesSummary(params?: { locationId?: string }) {
+export function useSalesSummary(params?: {
+  locationId?: string;
+  from?: string;
+  to?: string;
+  refetchIntervalMs?: number;
+}) {
   return useQuery({
-    queryKey: ["sales-summary", params?.locationId ?? "all"],
+    queryKey: ["sales-summary", params?.locationId ?? "all", params?.from ?? "", params?.to ?? ""],
     queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<SalesReportResponse>>("/api/reports/sales", { params });
+      const response = await apiClient.get<ApiResponse<SalesReportResponse>>("/api/reports/sales", {
+        params: { locationId: params?.locationId, from: params?.from, to: params?.to },
+      });
       return response.data.data;
     },
+    refetchInterval: params?.refetchIntervalMs,
   });
 }
 

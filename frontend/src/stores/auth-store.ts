@@ -15,14 +15,32 @@ interface AuthState {
   accessToken: string | null;
   user: UserResponse | null;
   status: "idle" | "loading" | "authenticated" | "unauthenticated";
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string, rememberMe?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<string | null>;
   bootstrap: () => Promise<void>;
 }
 
-function applyAuthResponse(set: (partial: Partial<AuthState>) => void, data: AuthResponse) {
-  localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+function getStoredRefreshToken(): string | null {
+  return localStorage.getItem(REFRESH_TOKEN_KEY) ?? sessionStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+function clearStoredRefreshToken() {
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+function storeRefreshToken(token: string, rememberMe: boolean) {
+  clearStoredRefreshToken();
+  (rememberMe ? localStorage : sessionStorage).setItem(REFRESH_TOKEN_KEY, token);
+}
+
+function applyAuthResponse(
+  set: (partial: Partial<AuthState>) => void,
+  data: AuthResponse,
+  rememberMe: boolean,
+) {
+  storeRefreshToken(data.refreshToken, rememberMe);
   set({ accessToken: data.accessToken, user: data.user, status: "authenticated" });
 }
 
@@ -31,18 +49,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   status: "idle",
 
-  async login(username, password) {
+  async login(username, password, rememberMe = true) {
     const response = await apiClient.post<ApiResponse<AuthResponse>>("/api/auth/login", {
       username,
       password,
     });
-    applyAuthResponse(set, response.data.data);
+    applyAuthResponse(set, response.data.data, rememberMe);
   },
 
   async logout() {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    const refreshToken = getStoredRefreshToken();
     const accessToken = get().accessToken;
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    clearStoredRefreshToken();
     set({ accessToken: null, user: null, status: "unauthenticated" });
     if (!accessToken) {
       return;
@@ -59,19 +77,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   async refresh() {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+    const refreshToken = getStoredRefreshToken();
     if (!refreshToken) {
       set({ status: "unauthenticated" });
       return null;
     }
+    const rememberMe = localStorage.getItem(REFRESH_TOKEN_KEY) !== null;
     try {
       const response = await apiClient.post<ApiResponse<AuthResponse>>("/api/auth/refresh", {
         refreshToken,
       });
-      applyAuthResponse(set, response.data.data);
+      applyAuthResponse(set, response.data.data, rememberMe);
       return response.data.data.accessToken;
     } catch {
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      clearStoredRefreshToken();
       set({ accessToken: null, user: null, status: "unauthenticated" });
       return null;
     }

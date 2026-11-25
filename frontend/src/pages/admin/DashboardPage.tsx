@@ -4,6 +4,7 @@ import { useEmployeeComparison } from "@/features/employees/api";
 import { useLocations } from "@/features/locations/api";
 import { useSales } from "@/features/sales/api";
 import { useUsers } from "@/features/users/api";
+import { DashboardAnalytics } from "@/pages/admin/DashboardAnalytics";
 
 function isToday(isoDate: string): boolean {
   const date = new Date(isoDate);
@@ -89,6 +90,8 @@ export function DashboardPage() {
           </p>
         </CardContent>
       </Card>
+
+      <DashboardAnalytics />
     </div>
   );
 }
