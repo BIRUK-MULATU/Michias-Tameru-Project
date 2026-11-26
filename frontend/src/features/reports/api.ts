@@ -8,6 +8,7 @@ export function useSalesSummary(params?: {
   from?: string;
   to?: string;
   refetchIntervalMs?: number;
+  enabled?: boolean;
 }) {
   return useQuery({
     queryKey: ["sales-summary", params?.locationId ?? "all", params?.from ?? "", params?.to ?? ""],
@@ -18,6 +19,7 @@ export function useSalesSummary(params?: {
       return response.data.data;
     },
     refetchInterval: params?.refetchIntervalMs,
+    enabled: params?.enabled ?? true,
   });
 }
 
@@ -31,8 +33,15 @@ async function downloadBlob(path: string, params: Record<string, string | undefi
   URL.revokeObjectURL(url);
 }
 
-export function downloadSalesExport(locationId: string | undefined, format: "csv" | "xlsx") {
-  return downloadBlob("/api/reports/sales/export", { locationId, format }, `sales-report.${format}`);
+export function downloadSalesExport(
+  params: { locationId?: string; from?: string; to?: string },
+  format: "csv" | "xlsx",
+) {
+  return downloadBlob(
+    "/api/reports/sales/export",
+    { locationId: params.locationId, from: params.from, to: params.to, format },
+    `sales-report.${format}`,
+  );
 }
 
 export function downloadInventoryExport(locationId: string, format: "csv" | "xlsx") {

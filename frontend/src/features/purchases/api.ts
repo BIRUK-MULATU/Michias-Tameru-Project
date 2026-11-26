@@ -13,11 +13,33 @@ export function useSuppliers() {
   });
 }
 
+export interface SupplierInput {
+  name: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  active: boolean;
+}
+
 export function useCreateSupplier() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { name: string; phone?: string }) => {
       const response = await apiClient.post<ApiResponse<SupplierResponse>>("/api/suppliers", input);
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
+  });
+}
+
+export function useUpdateSupplier() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: SupplierInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<SupplierResponse>>(
+        `/api/suppliers/${id}`,
+        input,
+      );
       return response.data.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),

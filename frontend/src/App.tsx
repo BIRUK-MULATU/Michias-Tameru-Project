@@ -6,6 +6,7 @@ import { SalesShell } from "@/components/layout/SalesShell";
 import { LoginPage } from "@/pages/LoginPage";
 import { ActivityLogsPage } from "@/pages/admin/ActivityLogsPage";
 import { ClosingsPage } from "@/pages/admin/ClosingsPage";
+import { CustomersPage } from "@/pages/admin/CustomersPage";
 import { DashboardPage } from "@/pages/admin/DashboardPage";
 import { EmployeeDetailPage } from "@/pages/admin/EmployeeDetailPage";
 import { EmployeesPage } from "@/pages/admin/EmployeesPage";
@@ -18,6 +19,7 @@ import { PurchasesPage } from "@/pages/admin/PurchasesPage";
 import { ReportsPage } from "@/pages/admin/ReportsPage";
 import { ReturnsPage as AdminReturnsPage } from "@/pages/admin/ReturnsPage";
 import { SalesPage } from "@/pages/admin/SalesPage";
+import { SuppliersPage } from "@/pages/admin/SuppliersPage";
 import { TransfersPage } from "@/pages/admin/TransfersPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { ClosingPage } from "@/pages/sales/ClosingPage";
@@ -48,6 +50,8 @@ function App() {
           <Route path="sales" element={<SalesPage />} />
           <Route path="returns" element={<AdminReturnsPage />} />
           <Route path="purchases" element={<PurchasesPage />} />
+          <Route path="suppliers" element={<SuppliersPage />} />
+          <Route path="customers" element={<CustomersPage />} />
           <Route path="expenses" element={<ExpensesPage />} />
           <Route path="closings" element={<ClosingsPage />} />
           <Route path="reports" element={<ReportsPage />} />

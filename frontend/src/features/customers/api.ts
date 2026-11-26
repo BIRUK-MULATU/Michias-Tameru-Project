@@ -23,3 +23,23 @@ export function useCreateCustomer() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
   });
 }
+
+export interface UpdateCustomerInput {
+  name: string;
+  phone?: string;
+  active: boolean;
+}
+
+export function useUpdateCustomer() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateCustomerInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<CustomerResponse>>(
+        `/api/customers/${id}`,
+        input,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
+  });
+}

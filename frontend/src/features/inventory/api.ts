@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import type { ApiResponse } from "@/types/api";
 import type { InventoryBalanceResponse, StockAdjustmentResponse } from "@/types/inventory";
@@ -14,6 +14,25 @@ export function useInventoryBalances(locationId?: string, search?: string) {
     },
     enabled: Boolean(locationId),
   });
+}
+
+export function useInventoryBalancesForLocations(locationIds: string[]) {
+  const results = useQueries({
+    queries: locationIds.map((locationId) => ({
+      queryKey: ["inventory-balances", locationId, ""],
+      queryFn: async () => {
+        const response = await apiClient.get<ApiResponse<InventoryBalanceResponse[]>>("/api/inventory", {
+          params: { locationId },
+        });
+        return response.data.data;
+      },
+    })),
+  });
+
+  return {
+    data: results.flatMap((result) => result.data ?? []),
+    isLoading: results.some((result) => result.isLoading),
+  };
 }
 
 export function useStockAdjustments(locationId?: string) {

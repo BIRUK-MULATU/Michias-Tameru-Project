@@ -30,7 +30,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useLocations } from "@/features/locations/api";
-import { useCreateUser, useSetUserStatus, useUsers } from "@/features/users/api";
+import { useCreateUser, useSetUserStatus, useUpdateUser, useUsers } from "@/features/users/api";
+import type { UserResponse } from "@/types/user";
 
 const createUserSchema = z.object({
   username: z.string().min(3, "At least 3 characters"),
@@ -151,6 +152,109 @@ function CreateUserDialog() {
   );
 }
 
+const editUserSchema = z.object({
+  fullName: z.string().min(1, "Required"),
+  email: z.union([z.literal(""), z.string().email()]).optional(),
+  locationId: z.string().optional(),
+});
+
+type EditUserForm = z.infer<typeof editUserSchema>;
+
+function EditUserDialog({ user }: { user: UserResponse }) {
+  const [open, setOpen] = useState(false);
+  const { data: locations } = useLocations();
+  const updateUser = useUpdateUser();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EditUserForm>({
+    resolver: zodResolver(editUserSchema),
+    defaultValues: {
+      fullName: user.fullName,
+      email: user.email ?? "",
+      locationId: user.locationId ?? undefined,
+    },
+  });
+
+  async function onSubmit(values: EditUserForm) {
+    await updateUser.mutateAsync({
+      id: user.id,
+      fullName: values.fullName,
+      email: values.email || undefined,
+      locationId: user.role === "SALESPERSON" ? values.locationId : undefined,
+    });
+    setOpen(false);
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) {
+          reset({
+            fullName: user.fullName,
+            email: user.email ?? "",
+            locationId: user.locationId ?? undefined,
+          });
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          Edit
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit employee</DialogTitle>
+        </DialogHeader>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2">
+            <Label htmlFor="edit-fullName">Full name</Label>
+            <Input id="edit-fullName" {...register("fullName")} />
+            {errors.fullName && (
+              <p className="text-sm text-destructive">{errors.fullName.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-email">Email (optional)</Label>
+            <Input id="edit-email" type="email" {...register("email")} />
+          </div>
+          {user.role === "SALESPERSON" && (
+            <div className="space-y-2">
+              <Label>Assigned location</Label>
+              <Select
+                value={watch("locationId")}
+                onValueChange={(value) => setValue("locationId", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locations?.map((location) => (
+                    <SelectItem key={location.id} value={location.id}>
+                      {location.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save changes"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function UsersPage() {
   const { data: users, isLoading } = useUsers();
   const setStatus = useSetUserStatus();
@@ -192,7 +296,8 @@ export function UsersPage() {
                     {user.active ? "Active" : "Inactive"}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className="flex justify-end gap-2">
+                  <EditUserDialog user={user} />
                   <Button
                     variant="outline"
                     size="sm"

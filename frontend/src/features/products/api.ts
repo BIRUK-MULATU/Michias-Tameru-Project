@@ -30,6 +30,22 @@ export function useCreateBrand() {
   });
 }
 
+export interface UpdateBrandInput {
+  name: string;
+  active: boolean;
+}
+
+export function useUpdateBrand() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateBrandInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<BrandResponse>>(`/api/brands/${id}`, input);
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["brands"] }),
+  });
+}
+
 export function useCategories() {
   return useQuery({
     queryKey: ["categories"],
@@ -45,6 +61,26 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: async (name: string) => {
       const response = await apiClient.post<ApiResponse<CategoryResponse>>("/api/categories", { name });
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
+  });
+}
+
+export interface UpdateCategoryInput {
+  name: string;
+  parentCategoryId?: string | null;
+  active: boolean;
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateCategoryInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<CategoryResponse>>(
+        `/api/categories/${id}`,
+        input,
+      );
       return response.data.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] }),
@@ -74,6 +110,24 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: async (input: CreateProductInput) => {
       const response = await apiClient.post<ApiResponse<ProductResponse>>("/api/products", input);
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+  });
+}
+
+export interface UpdateProductInput extends CreateProductInput {
+  active: boolean;
+}
+
+export function useUpdateProduct() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateProductInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<ProductResponse>>(
+        `/api/products/${id}`,
+        input,
+      );
       return response.data.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
@@ -110,6 +164,29 @@ export function useCreateVariant() {
       const response = await apiClient.post<ApiResponse<ProductVariantResponse>>(
         `/api/products/${productId}/variants`,
         body,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["product-variants"] }),
+  });
+}
+
+export interface UpdateVariantInput {
+  sku: string;
+  colorName: string;
+  shadeCode?: string;
+  defaultSalePrice: number;
+  reorderLevel?: number;
+  active: boolean;
+}
+
+export function useUpdateVariant() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateVariantInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<ProductVariantResponse>>(
+        `/api/products/variants/${id}`,
+        input,
       );
       return response.data.data;
     },

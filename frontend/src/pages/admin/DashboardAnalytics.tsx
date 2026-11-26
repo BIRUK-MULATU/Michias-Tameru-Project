@@ -16,50 +16,25 @@ import {
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { ChartTypeToggle, type ChartKind } from "@/components/dashboard/ChartTypeToggle";
 import { KpiCard } from "@/components/dashboard/KpiCard";
+import {
+  DARK_AXIS,
+  DARK_GRID,
+  DARK_TOOLTIP,
+  PALETTE,
+  formatAxisDate,
+  formatMoney,
+  pctChange,
+  startOfDaysAgo,
+} from "@/lib/chart-utils";
 import { cn } from "@/lib/utils";
 import { useEmployeeComparison } from "@/features/employees/api";
 import { useSalesSummary } from "@/features/reports/api";
-
-const PALETTE = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
-
-const DARK_GRID = "rgba(255,255,255,0.08)";
-const DARK_AXIS = "rgba(226,232,240,0.5)";
-
-const DARK_TOOLTIP = {
-  backgroundColor: "#0f172a",
-  border: "1px solid rgba(255,255,255,0.12)",
-  borderRadius: 8,
-  fontSize: 12,
-  color: "#e2e8f0",
-};
 
 const RANGE_OPTIONS = [
   { label: "7 days", days: 7 },
   { label: "30 days", days: 30 },
   { label: "90 days", days: 90 },
 ];
-
-function startOfDaysAgo(days: number, anchor: Date): Date {
-  const date = new Date(anchor);
-  date.setHours(0, 0, 0, 0);
-  date.setDate(date.getDate() - (days - 1));
-  return date;
-}
-
-function formatAxisDate(value: string): string {
-  const date = new Date(value);
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-function formatMoney(value: unknown): string {
-  const num = Array.isArray(value) ? Number(value[0]) : Number(value);
-  return Number.isFinite(num) ? num.toFixed(2) : "0.00";
-}
-
-function pctChange(current: number, previous: number): number | null {
-  if (previous === 0) return current === 0 ? null : 100;
-  return ((current - previous) / previous) * 100;
-}
 
 export function DashboardAnalytics() {
   const [rangeDays, setRangeDays] = useState(30);

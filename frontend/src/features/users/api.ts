@@ -35,6 +35,25 @@ export function useCreateUser() {
   });
 }
 
+export interface UpdateUserInput {
+  fullName: string;
+  email?: string;
+  locationId?: string;
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...input }: UpdateUserInput & { id: string }) => {
+      const response = await apiClient.put<ApiResponse<UserResponse>>(`/api/users/${id}`, input);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+
 export function useSetUserStatus() {
   const queryClient = useQueryClient();
   return useMutation({
