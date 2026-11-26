@@ -184,11 +184,11 @@ export function InventoryPage() {
       <PendingAdjustments />
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Inventory</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <Select value={locationId} onValueChange={setLocationId}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
@@ -203,7 +203,7 @@ export function InventoryPage() {
               placeholder="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-48"
+              className="w-full sm:w-48"
             />
             {locationId && <RequestAdjustmentDialog locationId={locationId} />}
           </div>

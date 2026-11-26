@@ -16,7 +16,7 @@ import {
   LineChart,
   LogOut,
 } from "lucide-react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Avatar,
   AvatarFallback,
@@ -76,6 +76,7 @@ export function AdminShell() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   async function handleLogout() {
     await logout();
@@ -87,10 +88,10 @@ export function AdminShell() {
       <Sidebar collapsible="icon">
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-1.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-semibold">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 font-semibold text-primary-foreground shadow-sm shadow-primary/30">
               T
             </div>
-            <span className="font-semibold">Thread IMS</span>
+            <span className="truncate font-heading font-semibold tracking-tight">Thread IMS</span>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -98,29 +99,28 @@ export function AdminShell() {
             <SidebarGroupLabel>Business</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.to}>
-                    <SidebarMenuButton asChild tooltip={item.label}>
-                      <NavLink
-                        to={item.to}
-                        end={item.end}
-                        className={({ isActive }) =>
-                          isActive ? "font-medium text-foreground" : undefined
-                        }
-                      >
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {navItems.map((item) => {
+                  const isActive = item.end
+                    ? pathname === item.to
+                    : pathname === item.to || pathname.startsWith(`${item.to}/`);
+                  return (
+                    <SidebarMenuItem key={item.to}>
+                      <SidebarMenuButton asChild tooltip={item.label} isActive={isActive}>
+                        <NavLink to={item.to} end={item.end} className="transition-colors">
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-14 items-center gap-2 border-b px-4">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-card/60 px-3 backdrop-blur-sm sm:px-4">
           <SidebarTrigger />
           <div className="flex-1" />
           <NotificationBell />
@@ -129,10 +129,12 @@ export function AdminShell() {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent"
+                  className="flex items-center gap-2 rounded-md px-1.5 py-1.5 text-sm transition-colors hover:bg-accent sm:px-2"
                 >
-                  <Avatar className="h-7 w-7">
-                    <AvatarFallback>{initials(user.fullName)}</AvatarFallback>
+                  <Avatar className="h-7 w-7 ring-2 ring-primary/15">
+                    <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                      {initials(user.fullName)}
+                    </AvatarFallback>
                   </Avatar>
                   <span className="hidden sm:inline">{user.fullName}</span>
                 </button>
@@ -148,7 +150,7 @@ export function AdminShell() {
             </DropdownMenu>
           )}
         </header>
-        <main className="flex-1 overflow-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-6">
           <Outlet />
         </main>
       </SidebarInset>

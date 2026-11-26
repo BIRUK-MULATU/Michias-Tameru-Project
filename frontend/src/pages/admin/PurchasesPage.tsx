@@ -143,7 +143,7 @@ function CreatePurchaseDialog() {
           <DialogTitle>Create purchase</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Supplier</Label>
               <Select onValueChange={(value) => setValue("supplierId", value)}>
@@ -289,9 +289,9 @@ export function PurchasesPage() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle>Purchases</CardTitle>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <AddSupplierDialog />
           <CreatePurchaseDialog />
         </div>

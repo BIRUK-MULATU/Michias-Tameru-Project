@@ -104,7 +104,7 @@ function CreateTransferDialog() {
           <DialogTitle>Create stock transfer</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>From</Label>
               <Select onValueChange={(value) => setValue("fromLocationId", value)}>
@@ -247,7 +247,7 @@ export function TransfersPage() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle>Stock Transfers</CardTitle>
         <CreateTransferDialog />
       </CardHeader>

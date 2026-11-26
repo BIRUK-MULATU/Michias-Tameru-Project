@@ -142,12 +142,18 @@ export function DashboardAnalytics() {
   }, [from, to]);
 
   return (
-    <div className="rounded-3xl bg-slate-950 p-5 text-slate-100 shadow-xl ring-1 ring-white/10 sm:p-6">
+    <div
+      className="rounded-2xl p-4 text-slate-100 shadow-xl ring-1 ring-white/10 sm:rounded-3xl sm:p-6"
+      style={{
+        background:
+          "radial-gradient(80% 60% at 0% 0%, color-mix(in oklch, var(--primary), transparent 91%) 0%, oklch(0.16 0.015 260) 38%)",
+      }}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-medium text-slate-400">Sales performance</p>
-          <div className="mt-0.5 flex items-center gap-2">
-            <h2 className="text-base font-semibold text-white">
+          <div className="mt-0.5 flex flex-wrap items-center gap-2">
+            <h2 className="text-sm font-semibold text-white sm:text-base">
               Key Performance Indicators — {new Date().toLocaleDateString(undefined, { month: "short", year: "numeric" })}
             </h2>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-400 ring-1 ring-emerald-500/30">
@@ -167,7 +173,8 @@ export function DashboardAnalytics() {
               onClick={() => setRangeDays(option.days)}
               className={cn(
                 "rounded-md px-2.5 py-1 text-xs font-medium text-slate-400 transition-colors hover:text-white",
-                rangeDays === option.days && "bg-white/10 text-white",
+                rangeDays === option.days &&
+                  "bg-[color-mix(in_oklch,var(--primary),transparent_15%)] text-white shadow-sm",
               )}
             >
               {option.label}
@@ -179,7 +186,7 @@ export function DashboardAnalytics() {
       <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs text-slate-400">Total revenue</p>
-          <p className="mt-1 text-4xl font-bold text-white">{summary ? summary.totalRevenue.toFixed(2) : "—"}</p>
+          <p className="mt-1 text-3xl font-bold text-white sm:text-4xl">{summary ? summary.totalRevenue.toFixed(2) : "—"}</p>
           <p className="mt-1 text-xs">
             {revenueDelta !== null ? (
               <span className={cn("font-medium", revenueDelta >= 0 ? "text-emerald-400" : "text-red-400")}>
@@ -191,7 +198,7 @@ export function DashboardAnalytics() {
             <span className="text-slate-500">vs previous {rangeDays} days</span>
           </p>
         </div>
-        <div className="h-16 w-40">
+        <div className="h-16 w-32 sm:w-40">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={trendData}>
               <Bar dataKey="revenue" fill="var(--chart-1)" radius={[2, 2, 0, 0]} />

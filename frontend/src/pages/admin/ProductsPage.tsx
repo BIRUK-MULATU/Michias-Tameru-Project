@@ -139,7 +139,7 @@ function CreateProductDialog() {
             <Input id="product-name" {...register("name")} />
             {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Brand</Label>
               <Select onValueChange={(value) => setValue("brandId", value)}>
@@ -259,7 +259,7 @@ function CreateVariantDialog() {
               <p className="text-sm text-destructive">{errors.productId.message}</p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="variant-sku">SKU</Label>
               <Input id="variant-sku" {...register("sku")} />
@@ -273,7 +273,7 @@ function CreateVariantDialog() {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="variant-shade">Shade code</Label>
               <Input id="variant-shade" {...register("shadeCode")} />
@@ -306,9 +306,9 @@ export function ProductsPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Products</CardTitle>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <QuickAddDialog
               label="brand"
               triggerLabel="Add brand"
@@ -360,14 +360,14 @@ export function ProductsPage() {
       </Card>
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between gap-4">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>Color variants (sellable SKUs)</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <Input
               placeholder="Search by product, SKU, or color"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64"
+              className="w-full sm:w-64"
             />
             <CreateVariantDialog />
           </div>

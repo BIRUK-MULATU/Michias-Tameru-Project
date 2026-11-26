@@ -1,5 +1,7 @@
+import { AlertTriangle, ReceiptText, Store, Users2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { useEmployeeComparison } from "@/features/employees/api";
 import { useLocations } from "@/features/locations/api";
 import { useSales } from "@/features/sales/api";
@@ -29,41 +31,68 @@ export function DashboardPage() {
   const openDiscrepancies = comparison?.reduce((sum, row) => sum + row.stockDiscrepancies, 0) ?? 0;
   const pendingApprovals = comparison?.reduce((sum, row) => sum + row.pendingReturnRequests, 0) ?? 0;
 
+  const needsAttention = openDiscrepancies + pendingApprovals > 0;
+
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
+    <div className="space-y-5 sm:space-y-6">
+      <div>
+        <h1 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+          Welcome back
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Here's what's happening across your business today.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="transition-shadow hover:shadow-md">
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Active locations
             </CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--chart-1),white_85%)] text-[color-mix(in_oklch,var(--chart-1),black_10%)]">
+              <Store className="h-4.5 w-4.5" />
+            </span>
           </CardHeader>
-          <CardContent className="text-3xl font-semibold">{activeLocations}</CardContent>
+          <CardContent className="text-3xl font-semibold tabular-nums">{activeLocations}</CardContent>
         </Card>
-        <Card>
-          <CardHeader>
+        <Card className="transition-shadow hover:shadow-md">
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Active employees
             </CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--chart-5),white_85%)] text-[color-mix(in_oklch,var(--chart-5),black_10%)]">
+              <Users2 className="h-4.5 w-4.5" />
+            </span>
           </CardHeader>
-          <CardContent className="text-3xl font-semibold">{activeEmployees}</CardContent>
+          <CardContent className="text-3xl font-semibold tabular-nums">{activeEmployees}</CardContent>
         </Card>
-        <Card>
-          <CardHeader>
+        <Card className="transition-shadow hover:shadow-md sm:col-span-2 lg:col-span-1">
+          <CardHeader className="flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Sales today (all locations)
             </CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_oklch,var(--chart-2),white_85%)] text-[color-mix(in_oklch,var(--chart-2),black_10%)]">
+              <ReceiptText className="h-4.5 w-4.5" />
+            </span>
           </CardHeader>
-          <CardContent className="text-3xl font-semibold">
+          <CardContent className="flex items-baseline gap-2 text-3xl font-semibold tabular-nums">
             {todaysTotal.toFixed(2)}
-            <span className="ml-2 text-sm font-normal text-muted-foreground">
+            <span className="text-sm font-normal text-muted-foreground">
               {todaysSales.length} sale{todaysSales.length === 1 ? "" : "s"}
             </span>
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader>
+
+      <Card className={cn(needsAttention && "border-amber-500/30 bg-amber-500/[0.03]")}>
+        <CardHeader className="flex-row items-center gap-2 space-y-0">
+          <AlertTriangle
+            className={cn(
+              "h-4 w-4",
+              needsAttention ? "text-amber-500" : "text-muted-foreground",
+            )}
+          />
           <CardTitle>Needs attention</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
