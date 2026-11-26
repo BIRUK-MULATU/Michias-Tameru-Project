@@ -58,8 +58,28 @@ public final class ExportWriter {
         if (value == null) {
             return "";
         }
+        value = neutralizeFormula(value);
         if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
             return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
+    }
+
+    /**
+     * Spreadsheet apps (Excel, LibreOffice, Google Sheets) evaluate a CSV
+     * cell as a formula when it starts with {@code =}, {@code +}, {@code -},
+     * or {@code @}. Report data (e.g. audit log descriptions) can contain
+     * attacker-controlled text — e.g. a login username, which is never
+     * validated since login is unauthenticated — so prefix such values with
+     * a single quote to force spreadsheet apps to treat them as plain text
+     * and prevent CSV/formula injection (CWE-1236).
+     */
+    private static String neutralizeFormula(String value) {
+        if (!value.isEmpty()) {
+            char first = value.charAt(0);
+            if (first == '=' || first == '+' || first == '-' || first == '@' || first == '\t' || first == '\r') {
+                return "'" + value;
+            }
         }
         return value;
     }
